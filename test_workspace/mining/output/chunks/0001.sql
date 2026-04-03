@@ -1,0 +1,12 @@
+
+    CREATE OR REPLACE PACKAGE BODY PKG_ETL_LOADER AS
+        PROCEDURE LOAD_STAGING IS
+        BEGIN
+            INSERT INTO STG_TABLE (ID, NAME)
+            SELECT ID, NAME FROM SOURCE_TABLE;
+            
+            COMMIT;
+        END LOAD_STAGING;
+    END PKG_ETL_LOADER;
+    /
+    

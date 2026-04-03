@@ -1,0 +1,19 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+.env
+.venv
+
+
+# Virtual environments
+.venv
+core_minin_instructions.md
+instruction_persist.md
+instruction_run.md
+instruction_second.md
+instruction.md
