@@ -35,6 +35,7 @@ from rich.progress import (
 from src.miner.miner_deepagent import MinerDeepAgent
 from src.miner.miner_subagents import build_default_subagents
 from src.miner.miner_tools import RegistryManager
+from src.miner.router import MiningRouter
 from src.utils.chunker import SQLChunker
 from src.utils.code_handler import read_sql_file
 
@@ -107,6 +108,7 @@ class SQLMiner:
         workspace: str,
         window_size: int = 150,
         overlap: int = 20,
+        output_mode: str = "pydantic",
     ):
         """
         Initialise the SQLMiner.
@@ -116,17 +118,27 @@ class SQLMiner:
                          under ``<workspace>/mining/``.
             window_size: Lines per chunk (passed to SQLChunker).
             overlap:     Overlap lines between consecutive chunks.
+            output_mode: Output mode for the mining router. Either
+                         ``"pydantic"`` (structured output, default) or
+                         ``"json"`` (regex-parsed from text).
         """
         self.llm = llm
         self.workspace = str(workspace)
         self.window_size = window_size
         self.overlap = overlap
+        self.output_mode = output_mode
 
         self.registry = RegistryManager(self.workspace)
+        self.router = MiningRouter(
+            llm=self.llm,
+            registry=self.registry,
+            output_mode=self.output_mode,
+        )
 
         logger.info(
             f"SQLMiner initialised | workspace={self.workspace} "
-            f"| window={window_size} | overlap={overlap}"
+            f"| window={window_size} | overlap={overlap} "
+            f"| output_mode={output_mode}"
         )
 
     # ------------------------------------------------------------------
@@ -184,15 +196,12 @@ class SQLMiner:
                 archive_path = self.registry.write_chunk_to_archive(text)
                 logger.debug(f"Chunk {idx} archived → {archive_path}")
 
-                # Step 2: Write chunk to current_chunk.sql (agents read this)
+                # Step 2: Write chunk to current_chunk.sql (legacy, kept for compatibility)
                 self._write_current_chunk(text)
 
-                # Step 3: Run core mining via MinerDeepAgent
-                result = self._run_core_mining(idx)
-
-                # Step 4: Persist results via RegistryManager
-                
-                self._persist_result(result, chunk_id=str(idx))
+                # Step 3: Run mining via MiningRouter
+                # The router handles context loading, agent invocation, and persistence
+                result = self.router.process_chunk(text, chunk_index=idx)
                 
 
                 progress.advance(task)
