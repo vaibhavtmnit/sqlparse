@@ -96,7 +96,10 @@ def process_mining_output(
             f"({assigned} linked to a flow, {len(entities) - assigned} unassigned)"
         )
 
-    # ── Step 4: Persist relationships ─────────────────────────────────
+    # ── Step 4: Stamp chunk_id on relationships and persist ─────────
+    for rel in relationships:
+        rel["chunk_id"] = chunk_id
+
     if relationships:
         registry.write_relationships(relationships)
         logger.debug(f"Chunk {chunk_id}: persisted {len(relationships)} relationship(s)")

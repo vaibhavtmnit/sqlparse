@@ -1,0 +1,1 @@
+Implemented code to keep chunk id in relationships table as well. the flow to add would be same as it is added tot he entities table. ensure changes are made in registry manager and other place except agents as it is added outside of the execution both for router and deepagent but inside the loop.

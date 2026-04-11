@@ -152,3 +152,35 @@ class MiningResult(BaseModel):
             "relationships": [r.model_dump() for r in self.relationships],
             "flows": [f.model_dump() for f in self.flows],
         }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "MiningResult":
+        """
+        Create a MiningResult from a raw dict with lists of dicts.
+
+        This is useful for converting regex-parsed JSON output (from the
+        deepagent pipeline) into a validated Pydantic model.
+
+        Args:
+            data: Dict with keys ``entities``, ``relationships``, ``flows``
+                  — each a list of plain dicts.
+
+        Returns:
+            A validated MiningResult instance.
+
+        Example::
+
+            raw = {"entities": [...], "relationships": [...], "flows": [...]}
+            result = MiningResult.from_dict(raw)
+        """
+        return cls(
+            entities=[
+                EntityRecord(**e) for e in data.get("entities", [])
+            ],
+            relationships=[
+                RelationshipRecord(**r) for r in data.get("relationships", [])
+            ],
+            flows=[
+                FlowRecord(**f) for f in data.get("flows", [])
+            ],
+        )

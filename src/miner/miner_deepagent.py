@@ -97,12 +97,27 @@ def _build_logging_middleware() -> Callable:
     @wrap_tool_call
     def _log_tool_calls(request: Any, handler: Callable) -> Any:
         """Intercept every tool call and log it via loguru."""
-        tool_name = getattr(request, "name", str(request))
-        raw_args = getattr(request, "args", {})
+        # The request is a ToolMessage instance — extract the tool_call
+        # object first, then pull name and args from it.
+        tool_call = getattr(request, "tool_call", None)
+        if tool_call is not None:
+            tool_name = getattr(tool_call, "name", None) or (
+                tool_call.get("name") if isinstance(tool_call, dict) else None
+            ) or "Common Tool"
+            raw_args = getattr(tool_call, "args", None) or (
+                tool_call.get("args") if isinstance(tool_call, dict) else None
+            ) or {}
+        else:
+            tool_name = getattr(request, "name", "Common Tool")
+            raw_args = getattr(request, "args", {})
+
+        # Ensure raw_args is a dict
+        if not isinstance(raw_args, dict):
+            raw_args = {}
 
         # Summarize arguments for logging (truncate long strings)
         args_summary: dict = {}
-        for k, v in (raw_args.items() if isinstance(raw_args, dict) else {}.items()):
+        for k, v in raw_args.items():
             v_str = str(v)
             args_summary[k] = _truncate_message(v_str, head_words=10, tail_words=10)
 
@@ -176,6 +191,7 @@ class MinerDeepAgent:
         subagents: Optional[List[Any]] = None,
         log_dir: Optional[str] = None,
         prompt_path: Optional[str] = None,
+        output_mode: str = "json",
     ):
         """
         Initialize the MinerDeepAgent.
@@ -190,7 +206,13 @@ class MinerDeepAgent:
                      Defaults to './mining/logs'.
             prompt_path: Explicit path to the system prompt .md file.
                          Defaults to src/prompts/miner_prompt.md.
+            output_mode: Either "json" (default, legacy regex parsing) or
+                         "pydantic" (structured output via MiningResult).
         """
+        from src.miner.models import MiningResult
+
+        self.output_mode = output_mode
+
         # Resolve log directory
         self._log_dir = log_dir or os.path.join(os.getcwd(), "mining", "logs")
         _configure_logger(self._log_dir)
@@ -214,17 +236,23 @@ class MinerDeepAgent:
 
         logger.info(
             f"Creating MinerDeepAgent | model={model} | "
-            f"tools={len(tools or [])} | subagents={len(subagents or [])}"
+            f"tools={len(tools or [])} | subagents={len(subagents or [])} | "
+            f"output_mode={output_mode}"
         )
 
-        # Create the deep agent
-        self._agent = create_deep_agent(
+        # Build create_deep_agent kwargs — add response_format for pydantic mode
+        agent_kwargs = dict(
             model=model,
             tools=list(tools or []),
             subagents=list(subagents or []),
             system_prompt=system_prompt,
             middleware=[logging_mw],
         )
+        if output_mode == "pydantic":
+            agent_kwargs["response_format"] = MiningResult
+
+        # Create the deep agent
+        self._agent = create_deep_agent(**agent_kwargs)
 
         logger.success("MinerDeepAgent created successfully.")
 

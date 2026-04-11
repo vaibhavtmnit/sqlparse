@@ -87,12 +87,20 @@ class SQLMiner:
     """
     Orchestrates the full SQL mining pipeline for one or more SQL source files.
 
+    Supports two processing pipelines:
+
+    - ``"router"`` (default): The new agentic router with supervisor-managed
+      state, context subagent, and structured Pydantic output.
+    - ``"deepagent"``: The original MinerDeepAgent + 5-subagent architecture
+      with regex-parsed JSON output.
+
     Usage::
 
         miner = SQLMiner(
+            llm=get_llm(),
             workspace="/path/to/workspace",
-            window_size=150,
-            overlap=20,
+            pipeline="router",        # or "deepagent"
+            output_mode="pydantic",    # router only: "pydantic" or "json"
         )
 
         # Mine from a file path
@@ -102,43 +110,62 @@ class SQLMiner:
         miner.run("SELECT 1 FROM DUAL;")
     """
 
+    VALID_PIPELINES = ("router", "deepagent")
+
     def __init__(
         self,
         llm: Any,
         workspace: str,
         window_size: int = 150,
         overlap: int = 20,
+        pipeline: str = "router",
         output_mode: str = "pydantic",
     ):
         """
         Initialise the SQLMiner.
 
         Args:
+            llm:         A LangChain BaseChatModel instance.
             workspace:   Root workspace directory.  All output is written
                          under ``<workspace>/mining/``.
             window_size: Lines per chunk (passed to SQLChunker).
             overlap:     Overlap lines between consecutive chunks.
-            output_mode: Output mode for the mining router. Either
+            pipeline:    Which processing pipeline to use:
+                         ``"router"`` (default) — new agentic router, or
+                         ``"deepagent"`` — original 5-subagent architecture.
+            output_mode: Output mode for the router pipeline. Either
                          ``"pydantic"`` (structured output, default) or
                          ``"json"`` (regex-parsed from text).
+                         Ignored when pipeline is ``"deepagent"``.
         """
+        if pipeline not in self.VALID_PIPELINES:
+            raise ValueError(
+                f"Invalid pipeline {pipeline!r}. "
+                f"Must be one of {self.VALID_PIPELINES}."
+            )
+
         self.llm = llm
         self.workspace = str(workspace)
         self.window_size = window_size
         self.overlap = overlap
+        self.pipeline = pipeline
         self.output_mode = output_mode
 
         self.registry = RegistryManager(self.workspace)
-        self.router = MiningRouter(
-            llm=self.llm,
-            registry=self.registry,
-            output_mode=self.output_mode,
-        )
+
+        # Only create the router when using the router pipeline
+        self.router = None
+        if self.pipeline == "router":
+            self.router = MiningRouter(
+                llm=self.llm,
+                registry=self.registry,
+                output_mode=self.output_mode,
+            )
 
         logger.info(
             f"SQLMiner initialised | workspace={self.workspace} "
             f"| window={window_size} | overlap={overlap} "
-            f"| output_mode={output_mode}"
+            f"| pipeline={pipeline} | output_mode={output_mode}"
         )
 
     # ------------------------------------------------------------------
@@ -196,13 +223,18 @@ class SQLMiner:
                 archive_path = self.registry.write_chunk_to_archive(text)
                 logger.debug(f"Chunk {idx} archived → {archive_path}")
 
-                # Step 2: Write chunk to current_chunk.sql (legacy, kept for compatibility)
+                # Step 2: Write chunk to current_chunk.sql (used by deepagent pipeline)
                 self._write_current_chunk(text)
 
-                # Step 3: Run mining via MiningRouter
-                # The router handles context loading, agent invocation, and persistence
-                result = self.router.process_chunk(text, chunk_index=idx)
-                
+                # Step 3: Run mining via the selected pipeline
+                if self.pipeline == "router":
+                    # Router handles context loading, agent invocation, and persistence
+                    result = self.router.process_chunk(text, chunk_index=idx)
+                else:
+                    # DeepAgent: old MinerDeepAgent + 5-subagent pipeline
+                    result = self._run_core_mining(idx)
+                    self._persist_result(result, chunk_id=str(idx))
+
 
                 progress.advance(task)
 
@@ -252,11 +284,16 @@ class SQLMiner:
           - Five mining subagents injected with their relevant tools
           - MinerDeepAgent with the system prompt from miner_prompt.md
 
+        When output_mode is "pydantic", the agent returns a structured
+        MiningResult via response_format. Otherwise, JSON arrays are
+        parsed from the agent's final text message.
+
         Returns:
             A dict with keys ``entities``, ``relationships``, ``flows`` —
-            each a list of dicts parsed from the JSON arrays in the agent's
-            final response message.
+            each a list of dicts.
         """
+        from src.miner.models import MiningResult
+
         # ------------------------------------------------------------------
         # Build tool map keyed by LangChain tool .name for subagent injection
         # ------------------------------------------------------------------
@@ -273,6 +310,7 @@ class SQLMiner:
             tools=all_tools,
             subagents=subagents,
             log_dir=self.registry.logs_dir,
+            output_mode=self.output_mode,
         )
 
         message = (
@@ -282,8 +320,29 @@ class SQLMiner:
         raw_result = agent.invoke(message)
 
         # ------------------------------------------------------------------
-        # Extract the agent's final text response and parse JSON arrays
+        # Extract the result based on output_mode
         # ------------------------------------------------------------------
+        if self.output_mode == "pydantic":
+            # Try structured_response first
+            structured = (
+                raw_result.get("structured_response")
+                if isinstance(raw_result, dict)
+                else None
+            )
+            if structured and isinstance(structured, MiningResult):
+                logger.info(
+                    f"DeepAgent pydantic: {len(structured.entities)} entities, "
+                    f"{len(structured.relationships)} relationships, "
+                    f"{len(structured.flows)} flows"
+                )
+                return structured.to_dict()
+
+            # Fallback to JSON text parsing if structured_response is missing
+            logger.warning(
+                "DeepAgent: structured_response not available, "
+                "falling back to JSON text parsing."
+            )
+
         return self._parse_agent_result(raw_result)
 
     @staticmethod
@@ -438,8 +497,11 @@ class SQLMiner:
             )
 
         # ------------------------------------------------------------------
-        # Step 4: Persist relationships (no chunk_id or flow_id needed here).
+        # Step 4: Stamp chunk_id and persist relationships.
         # ------------------------------------------------------------------
+        for rel in relationships:
+            rel["chunk_id"] = chunk_id
+
         if relationships:
             self.registry.write_relationships(relationships)
             logger.debug(f"Chunk {chunk_id}: persisted {len(relationships)} relationship(s)")

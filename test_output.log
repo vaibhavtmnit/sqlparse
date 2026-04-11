@@ -1,0 +1,891 @@
+﻿.\.venv\Scripts\python.exe
+ : [32m20:24:00[0m | 
+[1mINFO    [0m | 
+[1mInitialising SQLMiner 
+with 
+pipeline='deepagent', outp
+ut_mode='pydantic'...[0m
+At line:1 char:1
++ .\.venv\Scripts\python.e
+xe test_deepagent_e2e.py 
+2>&1 | Out-File -Fil ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo        
+      : NotSpecified: (  
+  [32m20:24:00[...ydan   
+ tic'...[0m:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+[32m20:24:01[0m | 
+[1mINFO    [0m | 
+[1mSQLMiner initialised 
+| workspace=test_workspace
+_deepagent | window=120 | 
+overlap=15 | 
+pipeline=deepagent | 
+output_mode=pydantic[0m
+[32m20:24:01[0m | 
+[1mINFO    [0m | 
+[1mRunning deepagent 
+miner on sample SQL...[0m
+[32m20:24:01[0m | 
+[1mINFO    [0m | 
+[1mSource is raw SQL 
+code (not a file path)[0m
+[32m20:24:01[0m | 
+[1mINFO    [0m | 
+[1mWorkspace files 
+cleaned (directories 
+retained).[0m
+[32m20:24:01[0m | 
+[1mINFO    [0m | 
+[1mStarting mining 
+pipeline | 3 chunk(s) to 
+process[0m
+[32m20:24:01[0m | 
+[92mRegistry 
+Operation[0m | 
+[92mChunk archived to tes
+t_workspace_deepagent\mini
+ng\output\chunks\0001.sql
+[0m
+[32m20:24:01[0m | 
+[34m[1mDEBUG   [0m | 
+[34m[1mChunk 0 archived 
+\u2192 test_workspace_deep
+agent\mining\output\chunks
+\0001.sql[0m
+[32m20:24:01[0m | 
+[1mINFO    [0m | 
+[36m[MinerAgent][0m 
+Logger initialized. Log 
+file: test_workspace_deepa
+gent/mining/logs\miner_age
+nt.log
+[32m20:24:01[0m | 
+[1mINFO    [0m | 
+[36m[MinerAgent][0m 
+Loaded system prompt from 
+C:\Users\vaibh\sqlparse\sr
+c\prompts\miner_prompt.md
+[32m20:24:01[0m | 
+[1mINFO    [0m | 
+[36m[MinerAgent][0m 
+Creating MinerDeepAgent | 
+model=profile={'max_input_
+tokens': 1048576, 
+'max_output_tokens': 
+65536, 'text_inputs': 
+True, 'image_inputs': 
+True, 'audio_inputs': 
+True, 'pdf_inputs': True, 
+'video_inputs': True, 
+'text_outputs': True, 
+'image_outputs': False, 
+'audio_outputs': False, 
+'video_outputs': False, 
+'reasoning_output': True, 
+'tool_calling': True, 
+'structured_output': 
+True, 'image_url_inputs': 
+True, 
+'image_tool_message': 
+True, 'tool_choice': 
+True} google_api_key=Secre
+tStr('**********') 
+model='gemini-2.5-pro' 
+temperature=0.0 client=<go
+ogle.genai.client.Client 
+object at 
+0x0000023273A7A6F0> 
+default_metadata=() 
+model_kwargs={} | tools=6 
+| subagents=5 | 
+output_mode=pydantic
+[32m20:24:02[0m | 
+[32m[1mSUCCESS [0m | 
+[36m[MinerAgent][0m 
+MinerDeepAgent created 
+successfully.
+[32m20:24:02[0m | 
+[1mINFO    [0m | 
+[36m[MinerAgent][0m 
+[35mINVOKE[0m | message 
+preview: Process the 
+current SQL chunk (chunk 
+index 0). Follow the 
+orchestration steps in 
+your system prompt 
+exactly.
+Traceback (most recent 
+call last):
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain_google_genai
+\chat_models.py", line 
+3047, in _generate
+    response: 
+GenerateContentResponse = 
+self.client.models.generat
+e_content(
+                          
+              ^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\google\genai\models.py
+", line 5849, in 
+generate_content
+    return 
+self._generate_content(
+           
+^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\google\genai\models.py
+", line 4526, in 
+_generate_content
+    response = 
+self._api_client.request(
+               
+^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\google\genai\_api_clie
+nt.py", line 1402, in 
+request
+    response = self._reque
+st(http_request, 
+http_options, 
+stream=False)
+               ^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\google\genai\_api_clie
+nt.py", line 1236, in 
+_request
+    return 
+retry(self._request_once, 
+http_request, stream)  # 
+type: 
+ignore[no-any-return]
+           ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\tenacity\__init__.py",
+ line 470, in __call__
+    do = self.iter(retry_s
+tate=retry_state)
+         ^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\tenacity\__init__.py",
+ line 371, in iter
+    result = 
+action(retry_state)
+             
+^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\tenacity\__init__.py",
+ line 413, in exc_check
+    raise 
+retry_exc.reraise()
+          
+^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\tenacity\__init__.py",
+ line 184, in reraise
+    raise 
+self.last_attempt.result()
+          
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\App
+Data\Local\Programs\Python
+\Python312\Lib\concurrent\
+futures\_base.py", line 
+449, in result
+    return 
+self.__get_result()
+           
+^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\App
+Data\Local\Programs\Python
+\Python312\Lib\concurrent\
+futures\_base.py", line 
+401, in __get_result
+    raise self._exception
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\tenacity\__init__.py",
+ line 473, in __call__
+    result = fn(*args, 
+**kwargs)
+             
+^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\google\genai\_api_clie
+nt.py", line 1215, in 
+_request_once
+    errors.APIError.raise_
+for_response(response)
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\google\genai\errors.py
+", line 134, in 
+raise_for_response
+    cls.raise_error(respon
+se.status_code, 
+response_json, response)
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\google\genai\errors.py
+", line 159, in 
+raise_error
+    raise 
+ClientError(status_code, 
+response_json, response)
+google.genai.errors.Client
+Error: 429 
+RESOURCE_EXHAUSTED. 
+{'error': {'code': 429, 
+'message': 'You exceeded 
+your current quota, 
+please check your plan 
+and billing details. For 
+more information on this 
+error, head to: https://ai
+.google.dev/gemini-api/doc
+s/rate-limits. To monitor 
+your current usage, head 
+to: https://ai.dev/rate-li
+mit. \n* Quota exceeded 
+for metric: generativelang
+uage.googleapis.com/genera
+te_content_free_tier_input
+_token_count, limit: 0, 
+model: gemini-2.5-pro\n* 
+Quota exceeded for 
+metric: generativelanguage
+.googleapis.com/generate_c
+ontent_free_tier_requests,
+ limit: 0, model: 
+gemini-2.5-pro\n* Quota 
+exceeded for metric: gener
+ativelanguage.googleapis.c
+om/generate_content_free_t
+ier_requests, limit: 0, 
+model: gemini-2.5-pro\n* 
+Quota exceeded for 
+metric: generativelanguage
+.googleapis.com/generate_c
+ontent_free_tier_input_tok
+en_count, limit: 0, 
+model: 
+gemini-2.5-pro\nPlease 
+retry in 19.783134526s.', 
+'status': 
+'RESOURCE_EXHAUSTED', 
+'details': [{'@type': 'typ
+e.googleapis.com/google.rp
+c.Help', 'links': 
+[{'description': 'Learn 
+more about Gemini API 
+quotas', 'url': 'https://a
+i.google.dev/gemini-api/do
+cs/rate-limits'}]}, 
+{'@type': 'type.googleapis
+.com/google.rpc.QuotaFailu
+re', 'violations': 
+[{'quotaMetric': 'generati
+velanguage.googleapis.com/
+generate_content_free_tier
+_input_token_count', 
+'quotaId': 'GenerateConten
+tInputTokensPerModelPerMin
+ute-FreeTier', 
+'quotaDimensions': 
+{'location': 'global', 
+'model': 
+'gemini-2.5-pro'}}, 
+{'quotaMetric': 'generativ
+elanguage.googleapis.com/g
+enerate_content_free_tier_
+requests', 'quotaId': 'Gen
+erateRequestsPerMinutePerP
+rojectPerModel-FreeTier', 
+'quotaDimensions': 
+{'location': 'global', 
+'model': 
+'gemini-2.5-pro'}}, 
+{'quotaMetric': 'generativ
+elanguage.googleapis.com/g
+enerate_content_free_tier_
+requests', 'quotaId': 'Gen
+erateRequestsPerDayPerProj
+ectPerModel-FreeTier', 
+'quotaDimensions': 
+{'location': 'global', 
+'model': 
+'gemini-2.5-pro'}}, 
+{'quotaMetric': 'generativ
+elanguage.googleapis.com/g
+enerate_content_free_tier_
+input_token_count', 
+'quotaId': 'GenerateConten
+tInputTokensPerModelPerDay
+-FreeTier', 
+'quotaDimensions': 
+{'location': 'global', 
+'model': 
+'gemini-2.5-pro'}}]}, 
+{'@type': 'type.googleapis
+.com/google.rpc.RetryInfo'
+, 'retryDelay': '19s'}]}}
+
+The above exception was 
+the direct cause of the 
+following exception:
+
+Traceback (most recent 
+call last):
+  File "C:\Users\vaibh\sql
+parse\src\miner\miner.py",
+ line 235, in run
+    result = 
+self._run_core_mining(idx)
+             
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\src\miner\miner.py",
+ line 320, in 
+_run_core_mining
+    raw_result = 
+agent.invoke(message)
+                 
+^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\src\miner\miner_deep
+agent.py", line 278, in 
+invoke
+    result = self._agent.i
+nvoke(payload, **kwargs)
+             ^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langgraph\pregel\main.
+py", line 3292, in invoke
+    for chunk in 
+self.stream(
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langgraph\pregel\main.
+py", line 2725, in stream
+    for _ in runner.tick(
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langgraph\pregel\_runn
+er.py", line 167, in tick
+    run_with_retry(
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langgraph\pregel\_retr
+y.py", line 96, in 
+run_with_retry
+    return task.proc.invok
+e(task.input, config)
+           ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langgraph\_internal\_r
+unnable.py", line 656, in 
+invoke
+    input = 
+context.run(step.invoke, 
+input, config, **kwargs)
+            ^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langgraph\_internal\_r
+unnable.py", line 400, in 
+invoke
+    ret = 
+self.func(*args, **kwargs)
+          
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\facto
+ry.py", line 1304, in 
+model_node
+    result = wrap_model_ca
+ll_handler(request, 
+_execute_model_sync)
+             ^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\facto
+ry.py", line 295, in 
+composed
+    outer_result = 
+outer(request, 
+inner_handler)
+                   ^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langsmith\run_helpers.
+py", line 760, in wrapper
+    function_result = run_
+container["context"].run(
+                      ^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\middl
+eware\todo.py", line 226, 
+in wrap_model_call
+    return handler(request
+.override(system_message=n
+ew_system_message))
+           ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\facto
+ry.py", line 285, in 
+inner_handler
+    inner_result = 
+inner(req, handler)
+                   
+^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\facto
+ry.py", line 295, in 
+composed
+    outer_result = 
+outer(request, 
+inner_handler)
+                   ^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langsmith\run_helpers.
+py", line 760, in wrapper
+    function_result = run_
+container["context"].run(
+                      ^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\deepagents\middleware\
+filesystem.py", line 
+1078, in wrap_model_call
+    return 
+handler(request)
+           
+^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\facto
+ry.py", line 285, in 
+inner_handler
+    inner_result = 
+inner(req, handler)
+                   
+^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\facto
+ry.py", line 295, in 
+composed
+    outer_result = 
+outer(request, 
+inner_handler)
+                   ^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langsmith\run_helpers.
+py", line 760, in wrapper
+    function_result = run_
+container["context"].run(
+                      ^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\deepagents\middleware\
+subagents.py", line 680, 
+in wrap_model_call
+    return handler(request
+.override(system_message=n
+ew_system_message))
+           ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\facto
+ry.py", line 285, in 
+inner_handler
+    inner_result = 
+inner(req, handler)
+                   
+^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\facto
+ry.py", line 295, in 
+composed
+    outer_result = 
+outer(request, 
+inner_handler)
+                   ^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langsmith\run_helpers.
+py", line 760, in wrapper
+    function_result = run_
+container["context"].run(
+                      ^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\deepagents\middleware\
+summarization.py", line 
+920, in wrap_model_call
+    return handler(request
+.override(messages=truncat
+ed_messages))
+           ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\facto
+ry.py", line 285, in 
+inner_handler
+    inner_result = 
+inner(req, handler)
+                   
+^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langsmith\run_helpers.
+py", line 760, in wrapper
+    function_result = run_
+container["context"].run(
+                      ^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain_anthropic\mi
+ddleware\prompt_caching.py
+", line 161, in 
+wrap_model_call
+    return 
+handler(request)
+           
+^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain\agents\facto
+ry.py", line 1273, in 
+_execute_model_sync
+    output = 
+model_.invoke(messages)
+             
+^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain_core\runnabl
+es\base.py", line 5695, 
+in invoke
+    return 
+self.bound.invoke(
+           
+^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain_google_genai
+\chat_models.py", line 
+2535, in invoke
+    return 
+super().invoke(input, 
+config, stop=stop, 
+**kwargs)
+           ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain_core\languag
+e_models\chat_models.py", 
+line 454, in invoke
+    self.generate_prompt(
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain_core\languag
+e_models\chat_models.py", 
+line 1201, in 
+generate_prompt
+    return self.generate(p
+rompt_messages, 
+stop=stop, 
+callbacks=callbacks, 
+**kwargs)
+           ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain_core\languag
+e_models\chat_models.py", 
+line 1010, in generate
+    
+self._generate_with_cache(
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain_core\languag
+e_models\chat_models.py", 
+line 1313, in 
+_generate_with_cache
+    result = 
+self._generate(
+             
+^^^^^^^^^^^^^^^
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain_google_genai
+\chat_models.py", line 
+3051, in _generate
+    
+_handle_client_error(e, 
+request)
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\langchain_google_genai
+\chat_models.py", line 
+145, in 
+_handle_client_error
+    raise ChatGoogleGenera
+tiveAIError(msg) from e
+langchain_google_genai.cha
+t_models.ChatGoogleGenerat
+iveAIError: Error calling 
+model 'gemini-2.5-pro' 
+(RESOURCE_EXHAUSTED): 429 
+RESOURCE_EXHAUSTED. 
+{'error': {'code': 429, 
+'message': 'You exceeded 
+your current quota, 
+please check your plan 
+and billing details. For 
+more information on this 
+error, head to: https://ai
+.google.dev/gemini-api/doc
+s/rate-limits. To monitor 
+your current usage, head 
+to: https://ai.dev/rate-li
+mit. \n* Quota exceeded 
+for metric: generativelang
+uage.googleapis.com/genera
+te_content_free_tier_input
+_token_count, limit: 0, 
+model: gemini-2.5-pro\n* 
+Quota exceeded for 
+metric: generativelanguage
+.googleapis.com/generate_c
+ontent_free_tier_requests,
+ limit: 0, model: 
+gemini-2.5-pro\n* Quota 
+exceeded for metric: gener
+ativelanguage.googleapis.c
+om/generate_content_free_t
+ier_requests, limit: 0, 
+model: gemini-2.5-pro\n* 
+Quota exceeded for 
+metric: generativelanguage
+.googleapis.com/generate_c
+ontent_free_tier_input_tok
+en_count, limit: 0, 
+model: 
+gemini-2.5-pro\nPlease 
+retry in 19.783134526s.', 
+'status': 
+'RESOURCE_EXHAUSTED', 
+'details': [{'@type': 'typ
+e.googleapis.com/google.rp
+c.Help', 'links': 
+[{'description': 'Learn 
+more about Gemini API 
+quotas', 'url': 'https://a
+i.google.dev/gemini-api/do
+cs/rate-limits'}]}, 
+{'@type': 'type.googleapis
+.com/google.rpc.QuotaFailu
+re', 'violations': 
+[{'quotaMetric': 'generati
+velanguage.googleapis.com/
+generate_content_free_tier
+_input_token_count', 
+'quotaId': 'GenerateConten
+tInputTokensPerModelPerMin
+ute-FreeTier', 
+'quotaDimensions': 
+{'location': 'global', 
+'model': 
+'gemini-2.5-pro'}}, 
+{'quotaMetric': 'generativ
+elanguage.googleapis.com/g
+enerate_content_free_tier_
+requests', 'quotaId': 'Gen
+erateRequestsPerMinutePerP
+rojectPerModel-FreeTier', 
+'quotaDimensions': 
+{'location': 'global', 
+'model': 
+'gemini-2.5-pro'}}, 
+{'quotaMetric': 'generativ
+elanguage.googleapis.com/g
+enerate_content_free_tier_
+requests', 'quotaId': 'Gen
+erateRequestsPerDayPerProj
+ectPerModel-FreeTier', 
+'quotaDimensions': 
+{'location': 'global', 
+'model': 
+'gemini-2.5-pro'}}, 
+{'quotaMetric': 'generativ
+elanguage.googleapis.com/g
+enerate_content_free_tier_
+input_token_count', 
+'quotaId': 'GenerateConten
+tInputTokensPerModelPerDay
+-FreeTier', 
+'quotaDimensions': 
+{'location': 'global', 
+'model': 
+'gemini-2.5-pro'}}]}, 
+{'@type': 'type.googleapis
+.com/google.rpc.RetryInfo'
+, 'retryDelay': '19s'}]}}
+During task with name 
+'model' and id 'f39fb06d-d
+c61-94dd-8450-6336c4b4ab23
+'
+
+During handling of the 
+above exception, another 
+exception occurred:
+
+Traceback (most recent 
+call last):
+  File "C:\Users\vaibh\sql
+parse\test_deepagent_e2e.p
+y", line 388, in <module>
+    run_test()
+  File "C:\Users\vaibh\sql
+parse\test_deepagent_e2e.p
+y", line 354, in run_test
+    miner.run(SAMPLE_SQL)
+  File "C:\Users\vaibh\sql
+parse\src\miner\miner.py",
+ line 210, in run
+    with progress:
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\rich\progress.py", 
+line 1190, in __exit__
+    self.stop()
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\rich\progress.py", 
+line 1176, in stop
+    self.live.stop()
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\rich\live.py", line 
+162, in stop
+    with self.console:
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\rich\console.py", 
+line 870, in __exit__
+    self._exit_buffer()
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\rich\console.py", 
+line 826, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\rich\console.py", 
+line 2042, in 
+_check_buffer
+    self._write_buffer()
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\rich\console.py", 
+line 2078, in 
+_write_buffer
+    legacy_windows_render(
+buffer, LegacyWindowsTerm(
+self.file))
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\rich\_windows_renderer
+.py", line 17, in 
+legacy_windows_render
+    
+term.write_styled(text, 
+style)
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\rich\_win32_console.py
+", line 441, in 
+write_styled
+    self.write_text(text)
+  File "C:\Users\vaibh\sql
+parse\.venv\Lib\site-packa
+ges\rich\_win32_console.py
+", line 402, in write_text
+    self.write(text)
+  File "C:\Users\vaibh\App
+Data\Local\Programs\Python
+\Python312\Lib\encodings\c
+p1252.py", line 19, in 
+encode
+    return codecs.charmap_
+encode(input,self.errors,e
+ncoding_table)[0]
+           ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+UnicodeEncodeError: 
+'charmap' codec can't 
+encode character '\u2839' 
+in position 0: character 
+maps to <undefined>
