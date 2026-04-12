@@ -17,9 +17,11 @@ def get_llm() -> ChatGoogleGenerativeAI:
         
     # Initialize the LangChain Google GenAI Chat Model
     llm = ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash-lite", # Adjusted default model
+        model="gemini-2.5-flash-lite", 
         google_api_key=api_key,
-        temperature=0.0
+        temperature=0.0,
+        max_retries=5,          # Balanced retries
+        request_timeout=300,    # 5 minute timeout
     )
     
     return llm

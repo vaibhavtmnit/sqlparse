@@ -16,8 +16,8 @@ from src.utils.chunker import SQLChunker
 from src.miner_advanced.state import MinerStateContext
 from src.miner_advanced.models import AdvancedMiningResult
 
-# Initialize Dual-Mode Director
 from src.miner_advanced.agents.dual_director import DualModeMiningDirector
+from src.miner_advanced.tools import _set_global_registry
 
 class MinerAdvancedOrchestrator:
     """
@@ -41,10 +41,18 @@ class MinerAdvancedOrchestrator:
         self.chunking_mode = chunking_mode
         self.execution_mode = execution_mode
         
+        # Bind registry to global tools
+        _set_global_registry(registry)
+        
         self.state = MinerStateContext(registry)
         
         # Inject Multi-Agent Pipeline
-        self.director = DualModeMiningDirector(llm=llm, execution_mode=execution_mode, registry=registry)
+        self.director = DualModeMiningDirector(
+            llm=llm, 
+            execution_mode=execution_mode, 
+            registry=registry,
+            workspace_dir=str(self.workspace_dir)
+        )
         
         # Create output workspace
         if workspace_dir:
@@ -63,6 +71,19 @@ class MinerAdvancedOrchestrator:
             level="DEBUG"
         )
         logger.info(f"Initialized MinerAdvancedOrchestrator workspace at {self.workspace_dir}")
+
+    @classmethod
+    def from_registry_file(
+        cls, 
+        registry_path: str, 
+        llm: Any, 
+        **kwargs
+    ) -> "MinerAdvancedOrchestrator":
+        """Factory method to initialize from a saved Separator Registry JSON."""
+        from src.separator.registry import EntityRegistry
+        registry = EntityRegistry.load_from_file(registry_path)
+        logger.info(f"Loaded registry from {registry_path} ({registry.count} entities)")
+        return cls(registry=registry, llm=llm, **kwargs)
 
     def run(self) -> dict:
         """Entrypoint for processing all parsed entities from top to bottom."""

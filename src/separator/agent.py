@@ -11,6 +11,7 @@ a validated ChunkAnalysis. Includes:
 from __future__ import annotations
 
 import re
+import time
 from pathlib import Path
 from typing import Any
 
@@ -103,7 +104,7 @@ class SeparatorAgent:
         analysis = agent.analyze_chunk(chunk_text, context_summary)
     """
 
-    def __init__(self, llm: Any, max_retries: int = 3) -> None:
+    def __init__(self, llm: Any, max_retries: int = 10) -> None:
         self.llm = llm
         self.max_retries = max_retries
         self._system_prompt = _load_prompt()
@@ -164,7 +165,18 @@ class SeparatorAgent:
             try:
                 analysis: ChunkAnalysis = self._structured_llm.invoke(messages)
             except Exception as exc:
-                logger.error(f"  ❌ LLM call failed: {exc}")
+                exc_str = str(exc)
+                logger.error(f"  ❌ LLM call failed: {exc_str}")
+                
+                # Handle Rate Limiting (429 / RESOURCE_EXHAUSTED)
+                if "429" in exc_str or "RESOURCE_EXHAUSTED" in exc_str:
+                    # Try to find a decimal number of seconds (e.g., "36.009s" or "3s")
+                    wait_match = re.search(r"retry in (\d+\.?\d*)s", exc_str)
+                    wait_time = float(wait_match.group(1)) if wait_match else 10.0
+                    wait_time = min(wait_time, 60.0) # Cap at 60s
+                    logger.warning(f"  ⏳ Rate limited. Sleeping for {wait_time}s before retry...")
+                    time.sleep(wait_time)
+                
                 if attempt == self.max_retries:
                     raise RuntimeError(
                         f"Separator agent failed after {self.max_retries} "

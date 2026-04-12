@@ -64,7 +64,7 @@ class CodeSeparator:
     def __init__(
         self,
         llm: Any,
-        max_retries: int = 3,
+        max_retries: int = 10,
         skip_descriptions: bool = False,
         deduplicate_overlap: bool = False,
     ) -> None:
