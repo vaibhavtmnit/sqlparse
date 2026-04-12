@@ -41,6 +41,17 @@ class MiningDirector:
         self.base_miner_agent = self.llm.with_structured_output(AdvancedMiningResult)
         self.field_lineage_agent = self.llm.with_structured_output(FieldLineageUpdate)
         
+        # Lightweight Scout Agent (Agentic Fallback for programmatic failures)
+        scout_prompt = ChatPromptTemplate.from_messages([
+            ("system", 
+             "You are a specialized SQL Field Extraction Scout.\n"
+             "Your goal is to extract ALL uniquely named column/field accesses from the SQL code.\n"
+             "Return ONLY a comma-separated list of the fields you find. No explanation."
+            ),
+            ("user", "SQL Code:\n```sql\n{code_text}\n```")
+        ])
+        self.field_scout_agent = scout_prompt | self.llm
+        
     def mine(
         self, 
         code_text: str, 
@@ -131,7 +142,18 @@ class MiningDirector:
         """Runs the hybrid Python + LLM Field Lineage deep analysis."""
         
         # Hybrid Tooling: Have python parse fields natively to save LLM reasoning tokens
-        field_hints = extract_field_candidates.invoke(code_text)
+        field_hints = extract_field_candidates.invoke(sql_text=code_text)
+        
+        # AGENTIC FALLBACK: If programmatic extraction failed or was flagged as needing fallback
+        if "PROGRAMMATIC_PARSER_FAILED" in field_hints or "NEEDS_AGENTIC_FALLBACK" in field_hints:
+            logger.info(f"  🔄 Programmatic parser hit complex syntax. Launching Agentic Field Scout for {source_mapping_id}...")
+            try:
+                scout_response = self.field_scout_agent.invoke({"code_text": code_text})
+                # Handle both AIMessage and raw string (depending on LC version/config)
+                scout_text = getattr(scout_response, 'content', str(scout_response))
+                field_hints = f"AGENTIC SCOUT RESULTS (Text-based extraction):\n{scout_text}\n\n(Original Parser Error: {field_hints})"
+            except Exception as e:
+                logger.warning(f"  ⚠ Field Scout Agent failed too: {e}")
         
         lineage_prompt = ChatPromptTemplate.from_messages([
             ("system", 

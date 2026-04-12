@@ -72,4 +72,5 @@ def extract_field_candidates(sql_text: str) -> str:
             return f"REGEX EXTRACTION (Raw SELECT blocks):\n{select_blocks[0][:1500]}"
         return "No SELECT targets detected programmatically. Please apply LLM inference to the raw SQL."
     except Exception as e:
-        return f"Parser failed ({str(e)}), please reason directly over the query."
+        # Signal to the Director that we need the Scout Agent to step in
+        return f"PROGRAMMATIC_PARSER_FAILED (Error: {str(e)}). NEEDS_AGENTIC_FALLBACK: Please reason directly over the query."

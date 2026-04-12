@@ -6,3 +6,11 @@
 17:18:42 | SUCCESS    | ✓ Orchestration Traversal Pass (Mocked)
 17:18:42 | INFO       | 
 === ALL OFFLINE INTEGRITY CHECKS PASSED ===
+17:37:26 | INFO       | Initialized MinerAdvancedOrchestrator workspace at offline_test_results
+17:37:26 | INFO       | Processing Array: EMPLOYEES (1 lines)
+17:37:26 | DEBUG      | Direct process: ent_001
+17:37:26 | INFO       | Processing Array: UPDATE_SALARY (1 lines)
+17:37:26 | DEBUG      | Direct process: ent_002
+17:37:26 | SUCCESS    | ✓ Orchestration Traversal Pass (Mocked)
+17:37:26 | INFO       | --- Testing Field Scout Fallback ---
+17:37:26 | CRITICAL   | FATAL INTEGRITY FAILURE: 'StructuredTool' object has no attribute 'invoke'

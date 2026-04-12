@@ -132,12 +132,48 @@ def test_mocked_orchestration(registry):
     
     logger.success("✓ Orchestration Traversal Pass (Mocked)")
 
+def test_field_scout_fallback():
+    logger.info("--- Testing Field Scout Fallback ---")
+    from src.miner_advanced.agents.director import MiningDirector
+    from unittest.mock import MagicMock
+    
+    mock_llm = MagicMock()
+    # Mock with_structured_output to return ourselves for the agents
+    mock_llm.with_structured_output.return_value = MagicMock()
+    # Mock invoke to return a simple scout response
+    mock_llm.invoke.return_value = MagicMock(content="COL1, COL2, ALIAS_COL")
+    
+    director = MiningDirector(llm=mock_llm)
+    
+    # Simulate a "complex" SQL that triggers the failure signal in the tool
+    # (In reality, we just need the director to react to the string)
+    from src.miner_advanced.tools import extract_field_candidates
+    # We can't easily force an exception in the tool without real sqlglot, 
+    # but we can verify the Director's logic if we pass it the failure signal.
+    
+    # We'll monkeypatch extract_field_candidates.invoke for this test
+    with patch("src.miner_advanced.tools.extract_field_candidates.invoke") as mock_tool_invoke:
+        mock_tool_invoke.return_value = "PROGRAMMATIC_PARSER_FAILED. NEEDS_AGENTIC_FALLBACK: reason over query."
+        
+        # We need a dummy result with one relationship to trigger lineage phase
+        from src.miner_advanced.models import AdvancedMiningResult, AdvancedRelationshipRecord
+        dummy_res = AdvancedMiningResult(relationships=[AdvancedRelationshipRecord(source="A", target="B")])
+        
+        # Trigger the lineage extraction
+        director._extract_field_lineage(dummy_res, "SELECT * FROM COMPLEX_TABLE", "ent_001")
+        
+        # Verify that scout was invoked
+        # field_scout_agent is (scout_prompt | self.llm), so it calls self.llm.invoke
+        assert mock_llm.invoke.called
+        logger.success("✓ Field Scout Fallback Logic Verified")
+
 if __name__ == "__main__":
     try:
         reg = test_registry_and_navigator()
         test_chunker_and_state(reg)
         test_enricher_and_graph(reg)
         test_mocked_orchestration(reg)
+        test_field_scout_fallback()
         logger.info("\n=== ALL OFFLINE INTEGRITY CHECKS PASSED ===")
     except Exception as e:
         logger.critical(f"FATAL INTEGRITY FAILURE: {e}")
