@@ -14,3 +14,72 @@
 17:37:26 | SUCCESS    | ✓ Orchestration Traversal Pass (Mocked)
 17:37:26 | INFO       | --- Testing Field Scout Fallback ---
 17:37:26 | CRITICAL   | FATAL INTEGRITY FAILURE: 'StructuredTool' object has no attribute 'invoke'
+17:54:33 | INFO       | Initialized MinerAdvancedOrchestrator workspace at offline_test_results
+17:54:33 | INFO       | Processing Array: EMPLOYEES (1 lines)
+17:54:33 | DEBUG      | Direct process: ent_001
+17:54:33 | INFO       | Processing Array: UPDATE_SALARY (1 lines)
+17:54:33 | DEBUG      | Direct process: ent_002
+17:54:33 | SUCCESS    | ✓ Orchestration Traversal Pass (Mocked)
+17:54:33 | INFO       | --- Testing Field Scout Fallback ---
+17:54:33 | CRITICAL   | FATAL INTEGRITY FAILURE: 'StructuredTool' object has no attribute 'invoke'
+17:54:58 | INFO       | Initialized MinerAdvancedOrchestrator workspace at offline_test_results
+17:54:58 | INFO       | Processing Array: EMPLOYEES (1 lines)
+17:54:58 | DEBUG      | Direct process: ent_001
+17:54:58 | INFO       | Processing Array: UPDATE_SALARY (1 lines)
+17:54:58 | DEBUG      | Direct process: ent_002
+17:54:58 | SUCCESS    | ✓ Orchestration Traversal Pass (Mocked)
+17:54:58 | INFO       | --- Testing Field Scout Fallback ---
+17:54:58 | CRITICAL   | FATAL INTEGRITY FAILURE: 4 validation errors for AdvancedRelationshipRecord
+relationship_tag
+  Field required [type=missing, input_value={'source': 'A', 'target': 'B'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+relationship_description
+  Field required [type=missing, input_value={'source': 'A', 'target': 'B'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+confidence_score
+  Field required [type=missing, input_value={'source': 'A', 'target': 'B'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+source_mapping_id
+  Field required [type=missing, input_value={'source': 'A', 'target': 'B'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+17:55:15 | INFO       | Initialized MinerAdvancedOrchestrator workspace at offline_test_results
+17:55:15 | INFO       | Processing Array: EMPLOYEES (1 lines)
+17:55:15 | DEBUG      | Direct process: ent_001
+17:55:15 | INFO       | Processing Array: UPDATE_SALARY (1 lines)
+17:55:15 | DEBUG      | Direct process: ent_002
+17:55:15 | SUCCESS    | ✓ Orchestration Traversal Pass (Mocked)
+17:55:15 | INFO       | --- Testing Field Scout Fallback ---
+17:55:15 | INFO       |   ✓ Field lineage mapping complete.
+17:55:15 | CRITICAL   | FATAL INTEGRITY FAILURE: 
+17:55:41 | INFO       | Initialized MinerAdvancedOrchestrator workspace at offline_test_results
+17:55:41 | INFO       | Processing Array: EMPLOYEES (1 lines)
+17:55:41 | DEBUG      | Direct process: ent_001
+17:55:41 | INFO       | Processing Array: UPDATE_SALARY (1 lines)
+17:55:41 | DEBUG      | Direct process: ent_002
+17:55:41 | SUCCESS    | ✓ Orchestration Traversal Pass (Mocked)
+17:55:41 | INFO       | --- Testing Field Scout Fallback ---
+17:55:41 | INFO       |   🔄 Programmatic parser hit complex syntax. Launching Agentic Field Scout for ent_001...
+17:55:41 | INFO       |   ✓ Field lineage mapping complete.
+17:55:41 | ERROR      | Fallback verification failed: 
+17:55:41 | CRITICAL   | FATAL INTEGRITY FAILURE: 
+17:56:01 | INFO       | Initialized MinerAdvancedOrchestrator workspace at offline_test_results
+17:56:01 | INFO       | Processing Array: EMPLOYEES (1 lines)
+17:56:01 | DEBUG      | Direct process: ent_001
+17:56:01 | INFO       | Processing Array: UPDATE_SALARY (1 lines)
+17:56:01 | DEBUG      | Direct process: ent_002
+17:56:01 | SUCCESS    | ✓ Orchestration Traversal Pass (Mocked)
+17:56:01 | INFO       | --- Testing Field Scout Fallback ---
+17:56:01 | INFO       |   🔄 Programmatic parser hit complex syntax. Launching Agentic Field Scout for ent_001...
+17:56:01 | INFO       |   ✓ Field lineage mapping complete.
+17:56:01 | ERROR      | Fallback verification failed: 
+17:56:01 | CRITICAL   | FATAL INTEGRITY FAILURE: 
+18:22:10 | INFO       | Initialized MinerAdvancedOrchestrator workspace at offline_test_results
+18:22:10 | INFO       | Processing Array: EMPLOYEES (1 lines)
+18:22:10 | DEBUG      | Direct process: ent_001
+18:22:10 | INFO       | Processing Array: UPDATE_SALARY (1 lines)
+18:22:10 | DEBUG      | Direct process: ent_002
+18:22:10 | SUCCESS    | ✓ Orchestration Traversal Pass (Mocked)
+18:22:10 | INFO       | --- Testing Field Scout Fallback (Hard Failure) ---
+18:22:10 | INFO       |   🔄 Programmatic parser hit complex syntax. Launching Agentic Field Scout for ent_001...
+18:22:10 | INFO       |   ✓ Field lineage mapping complete.
+18:22:10 | CRITICAL   | FATAL INTEGRITY FAILURE: 

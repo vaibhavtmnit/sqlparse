@@ -63,6 +63,9 @@ def extract_field_candidates(sql_text: str) -> str:
         for a in parsed.find_all(exp.Alias):
             columns.append(f"{a.this.sql()} AS {a.alias}")
             
+        if not columns:
+             return "No columns detected by programmatic parser. NEEDS_AGENTIC_FALLBACK: Please reason directly over the query."
+             
         return f"PROGRAMMATIC EXTRACTION SUCCESS: Detected Column accesses:\n{list(set(columns))}"
         
     except ImportError:
@@ -70,7 +73,7 @@ def extract_field_candidates(sql_text: str) -> str:
         select_blocks = re.findall(r'(?i)SELECT\s+(.*?)\s+FROM', sql_text, re.DOTALL)
         if select_blocks:
             return f"REGEX EXTRACTION (Raw SELECT blocks):\n{select_blocks[0][:1500]}"
-        return "No SELECT targets detected programmatically. Please apply LLM inference to the raw SQL."
+        return "No SELECT targets detected by Regex. NEEDS_AGENTIC_FALLBACK: Please apply LLM inference to the raw SQL."
     except Exception as e:
         # Signal to the Director that we need the Scout Agent to step in
         return f"PROGRAMMATIC_PARSER_FAILED (Error: {str(e)}). NEEDS_AGENTIC_FALLBACK: Please reason directly over the query."

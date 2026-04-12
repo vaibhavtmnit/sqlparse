@@ -142,7 +142,7 @@ class MiningDirector:
         """Runs the hybrid Python + LLM Field Lineage deep analysis."""
         
         # Hybrid Tooling: Have python parse fields natively to save LLM reasoning tokens
-        field_hints = extract_field_candidates.invoke(sql_text=code_text)
+        field_hints = extract_field_candidates.invoke({"sql_text": code_text})
         
         # AGENTIC FALLBACK: If programmatic extraction failed or was flagged as needing fallback
         if "PROGRAMMATIC_PARSER_FAILED" in field_hints or "NEEDS_AGENTIC_FALLBACK" in field_hints:
