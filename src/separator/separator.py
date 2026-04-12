@@ -229,6 +229,7 @@ class CodeSeparator:
     def _describe_entity(self, entry: EntityEntry) -> str:
         """
         Generate a detailed description for a single entity using the LLM.
+        Applies SQLChunker for massive code (>200 lines) and iterative summarization.
 
         Args:
             entry: The EntityEntry to describe.
@@ -260,29 +261,59 @@ class CodeSeparator:
                     f"{parent.entity_name} ({parent.entity_type})"
                 )
 
-        prompt = (
-            "You are an Oracle SQL documentation specialist.\n\n"
-            "Write a detailed description (150-300 words) of the following "
-            "Oracle SQL entity. Cover:\n"
-            "- PURPOSE: What does this code do?\n"
-            "- OPERATIONS: What operations are performed?\n"
-            "- DEPENDENCIES: What tables/objects does it interact with?\n"
-            "- CONTEXT: How does it fit in the broader system?\n\n"
-            f"Entity: {entry.entity_name}\n"
-            f"Type: {entry.entity_type}"
-            f"{'/' + entry.operation_type if entry.operation_type else ''}\n"
-            f"Nesting Level: {entry.nesting_level}\n"
-            f"{parent_info}\n"
-            f"{children_info}\n\n"
-            f"Resolved Code:\n```sql\n{entry.resolved_code}\n```\n\n"
-            "Write the description in clear prose (not bullet points). "
-            "Focus on what the code DOES, not what it IS."
-        )
+        # Decide if chunking is required
+        from src.utils.chunker import SQLChunker, Chunk
+        
+        code_str = entry.resolved_code
+        lines = code_str.splitlines()
+        
+        if len(lines) > 200:
+            logger.info(f"    Code massive (>200 lines). Chunking iteratively...")
+            chunker = SQLChunker(code_str, window_size=150, overlap=15)
+            chunks = list(chunker)
+        else:
+            chunks = [Chunk(0, code_str)]
 
-        response = self.llm.invoke(prompt)
-        content = (
-            response.content
-            if hasattr(response, "content")
-            else str(response)
-        )
-        return content.strip()
+        current_summary = ""
+
+        # Sliding window iterative abstraction
+        for idx, chunk in enumerate(chunks):
+            progress_indicator = ""
+            accumulated_context = ""
+
+            if len(chunks) > 1:
+                progress_indicator = f"\n[Processing chunk {idx+1} of {len(chunks)} of a massive script]\n"
+                if current_summary:
+                    accumulated_context = f"\n\n--- ONGOING RUNNING SUMMARY ---\n{current_summary}\n-------------------------------\n"
+
+            prompt = (
+                "You are an Oracle SQL Code Operations Analyst.\n\n"
+                "Write a highly detailed summary explaining the transformation logic in the following "
+                "Oracle SQL entity code block.\n\n"
+                "CRITICAL INSTRUCTIONS:\n"
+                "1. EXPLAIN TRANSFORMATION: Detail the exact sequence of logic, dependencies, and transformations the code performs.\n"
+                "2. NO FIELD NAMES: DO NOT include column/field names! Summarizing fields wastes space and loses the forest for the trees.\n"
+                "3. INCLUDE TABLE NAMES: Explicitly describe how specific tables interact, are created, read from, or modified.\n"
+                "4. HIGHLIGHT CAVEATS: Note any tricky nuances, dynamic SQL, loop constructs, Exceptions handling, or edge cases.\n\n"
+                f"Entity: {entry.entity_name}\n"
+                f"Type: {entry.entity_type}"
+                f"{'/' + entry.operation_type if entry.operation_type else ''}\n"
+                f"Nesting Level: {entry.nesting_level}\n"
+                f"{parent_info}\n"
+                f"{children_info}\n"
+                f"{progress_indicator}"
+                f"{accumulated_context}"
+                "\nCode Block to Analyze:\n"
+                f"```sql\n{chunk.chunk_text}\n```\n\n"
+            )
+
+            if len(chunks) > 1 and idx < len(chunks) - 1:
+                prompt += "Please output an completely updated, unified running summary incorporating your new findings along with the prior context seamlessly. Do NOT lose prior context! REMEMBER: No single Field names."
+            else:
+                prompt += "Write the final comprehensive description in clear, descriptive prose. Focus purely on what the flow/transformation DOES. Ensure zero field names are mentioned."
+
+            response = self.llm.invoke(prompt)
+            content = response.content if hasattr(response, "content") else str(response)
+            current_summary = content.strip()
+
+        return current_summary

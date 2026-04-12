@@ -1,35 +1,5 @@
 [
   {
-    "entity_id": "ent_0003",
-    "entity_name": "TARGET_TABLE",
-    "entity_type": "TABLE_OP",
-    "operation_type": "SELECT",
-    "parent_id": "ent_0002",
-    "nesting_level": 1,
-    "chunk_ids": [
-      1
-    ],
-    "resolved_code": "        SELECT COUNT(*) INTO v_cnt FROM TARGET_TABLE;",
-    "is_resolved": true,
-    "description": "The `TARGET_TABLE` entity, within the context of the `LOAD_DATA` procedure, serves to determine the current volume of data residing in a specific table. Its purpose is to provide a quantitative measure of existing records before or during a data loading process.\n\nThe operation performed is a simple `SELECT` statement. Specifically, it executes a `COUNT(*)` aggregate function against the `TARGET_TABLE`. The result of this count, which represents the total number of rows in the table, is then immediately stored into a local variable named `v_cnt`. This variable is assumed to be declared within the `LOAD_DATA` procedure.\n\nThis entity has a direct dependency on the `TARGET_TABLE` itself. It does not interact with any other tables or database objects beyond this primary target.\n\nIn the broader system, this `SELECT` statement is a preparatory step within the `LOAD_DATA` procedure. It likely informs subsequent logic within the procedure, such as deciding whether to perform an insert, update, or a full refresh of the `TARGET_TABLE`, or perhaps for logging and auditing purposes to track the state of the table before data manipulation. Its nesting level of 1 indicates it's a direct component of the `LOAD_DATA` procedure's execution flow.",
-    "trigger_target": null
-  },
-  {
-    "entity_id": "ent_0002",
-    "entity_name": "LOAD_DATA",
-    "entity_type": "PROCEDURE",
-    "operation_type": null,
-    "parent_id": null,
-    "nesting_level": 0,
-    "chunk_ids": [
-      1
-    ],
-    "resolved_code": "            UPPER(src.name),\n            src.amount * 1.1,\n            SYSDATE\n        FROM SOURCE_TABLE src\n        WHERE src.active_flag = 'Y';\n\n        v_cnt := SQL%ROWCOUNT;\n\n        COMMIT;\n    END LOAD_DATA;",
-    "is_resolved": true,
-    "description": "The `LOAD_DATA` procedure is designed to populate a target table with processed data extracted from a source table. Its primary purpose is to transfer and transform information, ensuring that only active records from the source are considered for insertion.\n\nThe procedure performs a `SELECT` operation on `SOURCE_TABLE`, aliased as `src`. During this selection, it transforms the data: the `name` column is converted to uppercase, the `amount` is increased by 10%, and the current system date is captured. A `WHERE` clause filters the source records, ensuring that only those with an `active_flag` set to 'Y' are processed. The transformed data is then implicitly inserted into a target table, which is referenced by the `TARGET_TABLE` object. After the data transfer, the procedure captures the number of rows affected by the operation using `SQL%ROWCOUNT` and stores it in a variable `v_cnt`. Finally, a `COMMIT` statement makes these changes permanent in the database.\n\nThis procedure has a direct dependency on `SOURCE_TABLE` for data retrieval and transformation. It also interacts with an implicit target table, represented by `TARGET_TABLE`, for data insertion. The `SYSDATE` function is used for timestamping. In the broader system, `LOAD_DATA` likely serves as a batch processing job or a scheduled task responsible for data synchronization, enrichment, or migration between different data stores.",
-    "trigger_target": null
-  },
-  {
     "entity_id": "ent_0001",
     "entity_name": "PKG_DEMO",
     "entity_type": "PACKAGE_BODY",
@@ -42,7 +12,22 @@
     ],
     "resolved_code": "CREATE OR REPLACE PACKAGE BODY PKG_DEMO AS\n\n    g_counter NUMBER := 0;\n\n    PROCEDURE LOAD_DATA IS\n        v_cnt NUMBER;\n    BEGIN\n        g_counter := g_counter + 1;\n\n        INSERT INTO TARGET_TABLE (id, name, value, load_date)\n        SELECT\n            src.id,\n            UPPER(src.name),\n            src.amount * 1.1,\n            SYSDATE\n\nEND PKG_DEMO;\n/",
     "is_resolved": true,
-    "description": "The `PKG_DEMO` package body defines the implementation for a demonstration package designed to load data into a target table. Its primary purpose is to process and transfer records from a source into `TARGET_TABLE`, while also performing some basic data transformations and tracking the number of times its procedures are invoked.\n\nThe core operation within this package body is the `LOAD_DATA` procedure. This procedure increments a package-level counter, `g_counter`, to keep track of its execution count. It then performs an `INSERT` operation into the `TARGET_TABLE`. The data for this insertion is sourced from a `SOURCE_TABLE` (implied by the `src` alias in the `SELECT` statement). During the insertion, the `id` and `name` columns are directly transferred, with the `name` being converted to uppercase. The `value` column is calculated by multiplying the `amount` from the source table by 1.1, and the `load_date` is populated with the current system date.\n\nThis package body implicitly depends on a `SOURCE_TABLE` (which is not explicitly defined in the provided snippet but is referenced by the `src` alias) and the `TARGET_TABLE` into which data is inserted. It also relies on the `SYSDATE` function.\n\nIn the broader system, `PKG_DEMO` likely serves as a foundational or illustrative component. It could be used for initial data seeding, testing data loading processes, or as a simple example within a larger application to demonstrate package functionality and data manipulation techniques. The `g_counter` suggests a potential need for auditing or monitoring the frequency of data loading operations.",
+    "description": "This Oracle SQL package body, named `PKG_DEMO`, defines a single procedure called `LOAD_DATA`.\n\nThe `LOAD_DATA` procedure performs the following operations:\n\n1.  **State Increment:** It first increments a package-level persistent counter variable. This counter's value is maintained across calls to procedures within this package.\n\n2.  **Data Insertion:** It then executes an `INSERT` statement into a table named `TARGET_TABLE`.\n\n3.  **Data Source:** The data for this insertion is derived from a `SELECT` statement that reads from a source, implicitly referred to as `src`.\n\n4.  **Transformation Logic:**\n    *   The first element selected from the source is directly inserted into the corresponding position in `TARGET_TABLE`.\n    *   The second element from the source undergoes a transformation: it is converted to its uppercase equivalent before being inserted.\n    *   The third element from the source is multiplied by a factor of 1.1, and this calculated result is inserted.\n    *   A fixed value representing the current system date and time is generated and inserted into the final position.\n\n**Caveats:**\n\n*   The procedure relies on a package-level variable (`g_counter`) which maintains its state between invocations of `LOAD_DATA`.\n*   The `INSERT` statement assumes that the `TARGET_TABLE` has columns that can accommodate the data types and transformations applied.\n*   There is no explicit error handling or exception management defined within this procedure. Any errors during the `INSERT` operation would propagate to the calling environment.\n*   The source of the data (`src`) is not explicitly defined within this snippet, implying it is either a table, a view, or a subquery defined elsewhere or implicitly available in the context where this procedure is called.",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_0002",
+    "entity_name": "LOAD_DATA",
+    "entity_type": "PROCEDURE",
+    "operation_type": null,
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      1
+    ],
+    "resolved_code": "            UPPER(src.name),\n            src.amount * 1.1,\n            SYSDATE\n        FROM SOURCE_TABLE src\n        WHERE src.active_flag = 'Y';\n\n        v_cnt := SQL%ROWCOUNT;\n\n        SELECT COUNT(*) INTO v_cnt FROM TARGET_TABLE;\n\n        COMMIT;\n    END LOAD_DATA;",
+    "is_resolved": true,
+    "description": "This procedure, `LOAD_DATA`, is designed to transfer and transform data from a source table into a target table.\n\nThe process begins by selecting specific data from `SOURCE_TABLE`. For each record in `SOURCE_TABLE` that meets a particular condition (where a flag indicates it is active), the procedure extracts three pieces of information. The first piece of information is converted to an uppercase representation. The second piece of information is multiplied by a factor of 1.1. The third piece of information is the current system date.\n\nThese three transformed pieces of data are then inserted as a new record into `TARGET_TABLE`.\n\nFollowing the insertion, the procedure captures the number of rows that were affected by the preceding `INSERT` statement. This count is stored in a variable. Subsequently, the procedure performs a separate count of all existing records within `TARGET_TABLE` and stores this total count in the same variable, overwriting the previous row count from the insert operation.\n\nFinally, the entire transaction is committed, making the inserted data permanent in `TARGET_TABLE`.\n\n**Caveats:**\n\n*   The procedure relies on a simple filtering condition on the source data.\n*   There is no explicit error handling or exception management defined within this code block. If the `INSERT` or `SELECT COUNT(*)` operations encounter an error, the transaction will likely be rolled back implicitly by the database, or the procedure might terminate abruptly.\n*   The variable used to store the row count is reused, first for the number of inserted rows and then for the total number of rows in the target table. This means the final value of the variable represents the total count in the target table after the load, not the number of rows loaded in this specific execution.\n*   The procedure does not handle potential duplicate records or data conflicts that might arise during the insertion into `TARGET_TABLE`.",
     "trigger_target": null
   }
 ]

@@ -1,0 +1,29 @@
+[
+  {
+    "entity_name": "HR_PAYROLL",
+    "entity_type": "PACKAGE_BODY",
+    "entity_description": "The HR_PAYROLL package body is a crucial component of the human resources and payroll system, responsible for encapsulating payroll-related logic and procedures.",
+    "source_mapping_id": "ent_0001",
+    "raw_chunk_ids": [
+      0
+    ]
+  },
+  {
+    "entity_name": "PAYROLL_LOG",
+    "entity_type": "TABLE",
+    "entity_description": "Stores payroll processing logs.",
+    "source_mapping_id": "ent_0003",
+    "raw_chunk_ids": [
+      0
+    ]
+  },
+  {
+    "entity_name": "EMP_TABLE",
+    "entity_type": "TABLE",
+    "entity_description": "Stores employee information.",
+    "source_mapping_id": "ent_0003",
+    "raw_chunk_ids": [
+      0
+    ]
+  }
+]

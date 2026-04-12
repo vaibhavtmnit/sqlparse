@@ -93,7 +93,7 @@ def run_test():
 
     # Re-create chunker for the separator
     chunker = SQLChunker(SMALL_SQL, window_size=15, overlap=3)
-    separator = CodeSeparator(llm, max_retries=3, skip_descriptions=True)
+    separator = CodeSeparator(llm, max_retries=3, skip_descriptions=False)
     registry = separator.process(chunker)
 
     # Results

@@ -1,0 +1,104 @@
+{
+  "entities": [
+    {
+      "entity_name": "HR_PAYROLL",
+      "entity_type": "PACKAGE_BODY",
+      "entity_description": "The HR_PAYROLL package body is a crucial component of the human resources and payroll system, responsible for encapsulating payroll-related logic and procedures.",
+      "source_mapping_id": "ent_0001",
+      "raw_chunk_ids": [
+        0
+      ]
+    },
+    {
+      "entity_name": "PAYROLL_LOG",
+      "entity_type": "TABLE",
+      "entity_description": "Stores payroll processing logs.",
+      "source_mapping_id": "ent_0003",
+      "raw_chunk_ids": [
+        0
+      ]
+    },
+    {
+      "entity_name": "EMP_TABLE",
+      "entity_type": "TABLE",
+      "entity_description": "Stores employee information.",
+      "source_mapping_id": "ent_0003",
+      "raw_chunk_ids": [
+        0
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "target": "PAYROLL_LOG",
+      "source": "EMP_TABLE",
+      "relationship_tag": "INSERTS_INTO",
+      "relationship_description": "The EMP_TABLE is queried to insert data into PAYROLL_LOG.",
+      "confidence_score": 0.9,
+      "field_mappings": [
+        {
+          "target_field": "EMP_ID",
+          "source_fields": [
+            "EMP_ID"
+          ],
+          "transformation_logic": ""
+        },
+        {
+          "target_field": "NET_SALARY",
+          "source_fields": [
+            "GROSS_SALARY",
+            "v_tax_rate"
+          ],
+          "transformation_logic": "GROSS_SALARY - (GROSS_SALARY * v_tax_rate)"
+        }
+      ],
+      "source_mapping_id": "ent_0003"
+    }
+  ],
+  "flows": [
+    {
+      "flow_id": "flow_0001",
+      "flow_description": "Declaration of a package-level variable 'v_tax_rate' within the HR_PAYROLL package body.",
+      "parent_flow_id": null,
+      "flow_entity_name": "v_tax_rate",
+      "flow_entity_type": "VARIABLE",
+      "flow_entity_description": "A package-level variable used to store the tax rate.",
+      "flow_entity_role": "DECLARATION",
+      "flow_entity_parent_relation": null,
+      "source_mapping_id": "ent_0001"
+    },
+    {
+      "flow_id": "f_0001",
+      "flow_description": "Start of procedure PROCESS_SALARY",
+      "parent_flow_id": null,
+      "flow_entity_name": "PROCESS_SALARY",
+      "flow_entity_type": "PROCEDURE",
+      "flow_entity_description": "The PROCESS_SALARY procedure, nested within the HR_PAYROLL package body, is designed to execute salary processing logic.",
+      "flow_entity_role": "ENTRY_POINT",
+      "flow_entity_parent_relation": null,
+      "source_mapping_id": "ent_0002"
+    },
+    {
+      "flow_id": "flow_0001",
+      "flow_description": "INSERT statement into PAYROLL_LOG from EMP_TABLE.",
+      "parent_flow_id": null,
+      "flow_entity_name": "PAYROLL_LOG",
+      "flow_entity_type": "TABLE_OP",
+      "flow_entity_description": "Insertion into PAYROLL_LOG table.",
+      "flow_entity_role": "TARGET",
+      "flow_entity_parent_relation": null,
+      "source_mapping_id": "ent_0003"
+    },
+    {
+      "flow_id": "flow_0002",
+      "flow_description": "SELECT statement from EMP_TABLE.",
+      "parent_flow_id": "flow_0001",
+      "flow_entity_name": "EMP_TABLE",
+      "flow_entity_type": "TABLE_OP",
+      "flow_entity_description": "Selection from EMP_TABLE table.",
+      "flow_entity_role": "SOURCE",
+      "flow_entity_parent_relation": null,
+      "source_mapping_id": "ent_0003"
+    }
+  ]
+}

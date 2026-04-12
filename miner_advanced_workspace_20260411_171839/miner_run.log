@@ -1,0 +1,16 @@
+17:18:39 | INFO       | Initialized MinerAdvancedOrchestrator workspace at miner_advanced_workspace_20260411_171839
+17:18:39 | INFO       | Processing Array: HR_PAYROLL (3 lines)
+17:18:39 | DEBUG      | Direct process: ent_0001
+17:18:39 | INFO       | [MODE: ROUTER] Delegating via strictly ordered Supervisor
+17:18:39 | INFO       | Director dispatched Agent Pipeline for block: ent_0001
+17:18:41 | INFO       | Processing Array: PROCESS_SALARY (3 lines)
+17:18:41 | DEBUG      | Direct process: ent_0002
+17:18:41 | INFO       | [MODE: ROUTER] Delegating via strictly ordered Supervisor
+17:18:41 | INFO       | Director dispatched Agent Pipeline for block: ent_0002
+17:18:42 | INFO       | Processing Array: PAYROLL_LOG (3 lines)
+17:18:42 | DEBUG      | Direct process: ent_0003
+17:18:42 | INFO       | [MODE: ROUTER] Delegating via strictly ordered Supervisor
+17:18:42 | INFO       | Director dispatched Agent Pipeline for block: ent_0003
+17:18:46 | INFO       |   -> Sending 1 relations to Field Lineage Agent.
+17:18:49 | INFO       |   ✓ Field lineage mapping complete.
+17:18:49 | INFO       | Mining fully complete. Output saved to miner_advanced_workspace_20260411_171839\final_mining_results.json

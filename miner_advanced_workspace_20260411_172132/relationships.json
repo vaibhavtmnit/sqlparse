@@ -1,0 +1,27 @@
+[
+  {
+    "target": "PAYROLL_LOG",
+    "source": "EMP_TABLE",
+    "relationship_tag": "INSERTS_INTO",
+    "relationship_description": "The EMP_TABLE is queried to insert data into PAYROLL_LOG.",
+    "confidence_score": 0.9,
+    "field_mappings": [
+      {
+        "target_field": "EMP_ID",
+        "source_fields": [
+          "EMP_ID"
+        ],
+        "transformation_logic": ""
+      },
+      {
+        "target_field": "NET_SALARY",
+        "source_fields": [
+          "GROSS_SALARY",
+          "v_tax_rate"
+        ],
+        "transformation_logic": "GROSS_SALARY - (GROSS_SALARY * v_tax_rate)"
+      }
+    ],
+    "source_mapping_id": "ent_0003"
+  }
+]
