@@ -32,7 +32,8 @@ class MinerAdvancedOrchestrator:
         chunk_threshold: int = 600, 
         overlap: int = 20,
         chunking_mode: str = "lines",       # 'lines' or 'tokens'
-        execution_mode: str = "deepagent"   # 'router' or 'deepagent'
+        execution_mode: str = "deepagent",  # 'router' or 'deepagent'
+        workspace_dir: Optional[str] = None
     ):
         self.registry = registry
         self.chunk_threshold = chunk_threshold
@@ -46,12 +47,18 @@ class MinerAdvancedOrchestrator:
         self.director = DualModeMiningDirector(llm=llm, execution_mode=execution_mode, registry=registry)
         
         # Create output workspace
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.workspace_dir = Path(f"miner_advanced_workspace_{timestamp}")
+        if workspace_dir:
+            self.workspace_dir = Path(workspace_dir)
+        else:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self.workspace_dir = Path(f"miner_advanced_workspace_{timestamp}")
+        
         self.workspace_dir.mkdir(parents=True, exist_ok=True)
         
+        # Add a specific log file for this run
+        log_file = self.workspace_dir / "miner_run.log"
         logger.add(
-            self.workspace_dir / "miner_run.log", 
+            log_file, 
             format="{time:HH:mm:ss} | {level: <10} | {message}", 
             level="DEBUG"
         )

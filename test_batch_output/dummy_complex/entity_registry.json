@@ -1,0 +1,153 @@
+[
+  {
+    "entity_id": "ent_0001",
+    "entity_name": "hr_management_pkg",
+    "entity_type": "PACKAGE_SPEC",
+    "operation_type": null,
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      0
+    ],
+    "resolved_code": "CREATE OR REPLACE PACKAGE hr_management_pkg AS\n    TYPE employee_record IS RECORD (\n        emp_id NUMBER,\n        emp_name VARCHAR2(100),\n        salary NUMBER\n    );\n    \n    TYPE employee_table IS TABLE OF employee_record;\n\n    PROCEDURE process_payroll(p_dept_id NUMBER);\n    FUNCTION get_top_performers(p_limit NUMBER) RETURN employee_table;\nEND hr_management_pkg;\n/",
+    "is_resolved": true,
+    "description": "This Oracle SQL package specification, named `hr_management_pkg`, defines the structure and interfaces for managing human resources data.\n\nIt establishes two distinct data types:\n\n1.  **`employee_record`**: This is a composite data type designed to hold information about a single individual. It is structured to contain a numerical identifier, a textual representation of their name, and a numerical value representing their compensation.\n\n2.  **`employee_table`**: This is a collection type, specifically a table, that can hold multiple instances of the `employee_record` type. This allows for the management of lists or sets of individual records.\n\nThe package then declares two executable units:\n\n1.  **`process_payroll`**: This is a procedure that accepts a single numerical input, representing a departmental identifier. The exact operations performed within this procedure are not defined in the specification but are intended to handle payroll processing for a given department.\n\n2.  **`get_top_performers`**: This is a function that accepts a single numerical input, representing a limit. It is designed to return a collection of `employee_record` types. The function's purpose is to identify and retrieve a specified number of top-performing individuals based on some internal criteria, which are not detailed in this specification.\n\nIn essence, this package specification acts as a blueprint, defining how data related to individuals will be structured and how specific operations, such as payroll processing and identifying high achievers, will be invoked and what types of data they will interact with. The actual implementation logic for these procedures and functions resides elsewhere.",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_0003",
+    "entity_name": "employees",
+    "entity_type": "TABLE_OP",
+    "operation_type": "SELECT",
+    "parent_id": "ent_0002",
+    "nesting_level": 1,
+    "chunk_ids": [
+      0
+    ],
+    "resolved_code": "SELECT emp_id, emp_name, salary \n        BULK COLLECT INTO l_emps\n        FROM employees\n        WHERE department_id = p_dept_id;",
+    "is_resolved": true,
+    "description": "This code block performs a data retrieval operation from the `employees` table. It is designed to fetch specific information for all records that meet a particular filtering criterion.\n\nThe process begins by targeting the `employees` table. A condition is applied to filter the rows, selecting only those where a certain attribute matches a provided input value. For each row that satisfies this condition, three distinct pieces of information are extracted.\n\nThe extracted data is then collected into a collection variable, `l_emps`, using a bulk operation. This means that instead of processing and storing each matching record individually, the entire set of qualifying records is retrieved and stored in memory efficiently. This bulk collection is a performance optimization for handling large result sets.\n\n**Caveats:**\n\n*   This operation is a read-only `SELECT` statement. It does not modify any data within the `employees` table.\n*   The filtering condition relies on an external parameter, `p_dept_id`. The behavior and results of this operation are entirely dependent on the value passed into this parameter.\n*   The `BULK COLLECT INTO` clause implies that the `l_emps` variable must be pre-declared as a collection type capable of holding the retrieved data. If the number of matching records exceeds the available memory allocated for `l_emps`, an error could occur.\n*   There is no explicit error handling shown within this specific code block. Any exceptions that might arise during the execution (e.g., table not found, insufficient privileges, invalid parameter type) would propagate to the calling environment.",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_0004",
+    "entity_name": "employees",
+    "entity_type": "TABLE_OP",
+    "operation_type": "UPDATE",
+    "parent_id": "ent_0002",
+    "nesting_level": 1,
+    "chunk_ids": [
+      0
+    ],
+    "resolved_code": "UPDATE employees \n                SET salary = salary * 1.1 \n                WHERE emp_id = l_emps(i).emp_id;",
+    "is_resolved": true,
+    "description": "This Oracle SQL code block performs an update operation on the `employees` table. It is designed to be executed within a loop, as indicated by the reference to `l_emps(i)`.\n\nThe core transformation logic is as follows:\n\n1.  **Target Table Identification:** The operation targets the `employees` table for modification.\n\n2.  **Row Selection:** A specific row within the `employees` table is identified for the update. This selection is based on a condition that matches a particular identifier from a collection named `l_emps`. The `i` subscript suggests that this is being done iteratively for each element within that collection.\n\n3.  **Value Transformation:** For the selected row, the existing value in the remuneration column is multiplied by 1.1. This effectively increases the remuneration by 10%.\n\n4.  **Value Assignment:** The calculated, increased remuneration value is then assigned back to the remuneration column of the identified row in the `employees` table.\n\n**Caveats and Nuances:**\n\n*   **Dynamic Row Targeting:** The `WHERE` clause dynamically determines which row to update. The specific identifier used for matching is derived from an element within the `l_emps` collection, which is assumed to be populated prior to this operation.\n*   **Iterative Processing:** The presence of `l_emps(i)` strongly implies that this `UPDATE` statement is part of a larger procedural construct, likely a `FOR` loop or a `WHILE` loop, iterating through a set of employee identifiers.\n*   **No Explicit Transaction Control:** This code snippet does not include explicit `COMMIT` or `ROLLBACK` statements. Therefore, its transactional behavior depends entirely on the surrounding PL/SQL code within the `hr_management_pkg` package. If this `UPDATE` is part of a larger transaction, it will be committed or rolled back along with other operations in that transaction.\n*   **No Error Handling:** There is no explicit exception handling shown for this `UPDATE` statement. If the `WHERE` clause fails to find a matching row, or if any other database error occurs during the update, the execution will likely halt unless handled by the calling PL/SQL block.\n*   **Data Type Assumption:** The multiplication operation assumes that the remuneration column is of a numeric data type that supports multiplication and decimal values.",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_0005",
+    "entity_name": "employees",
+    "entity_type": "TABLE_OP",
+    "operation_type": "SELECT",
+    "parent_id": "ent_0002",
+    "nesting_level": 1,
+    "chunk_ids": [
+      0
+    ],
+    "resolved_code": "SELECT emp_id, emp_name, salary \n                  FROM employees \n                  ORDER BY salary DESC",
+    "is_resolved": true,
+    "description": "[Description generation failed: Error calling model 'gemini-2.5-flash-lite' (RESOURCE_EXHAUSTED): 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite\\nPlease retry in 50.822907537s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-2.5-flash-lite', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '50s'}]}}]",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_0002",
+    "entity_name": "hr_management_pkg",
+    "entity_type": "PACKAGE_BODY",
+    "operation_type": null,
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      0,
+      1
+    ],
+    "resolved_code": "CREATE OR REPLACE PACKAGE BODY hr_management_pkg AS\n\n    PROCEDURE process_payroll(p_dept_id NUMBER) IS\n        l_emps employee_table;\n    BEGIN\n        -- Nested Table Operation: Bulk collect into nested table\n        SELECT emp_id, emp_name, salary \n        BULK COLLECT INTO l_emps\n        FROM employees\n        WHERE department_id = p_dept_id;\n\n        FOR i IN 1..l_emps.COUNT LOOP\n            IF l_emps(i).salary < 5000 THEN\n                UPDATE employees \n                SET salary = salary * 1.1 \n                WHERE emp_id = l_emps(i).emp_id;\n            END IF;\n        END LOOP;\n        \n        COMMIT;\n    END process_payroll;\n    FUNCTION get_top_performers(p_limit NUMBER) RETURN employee_table IS\n        l_result employee_table := employee_table();\n    BEGIN\n        -- Nested Table Operation: Initialize and extend\n        FOR r IN (SELECT emp_id, emp_name, salary \n                  FROM employees \n                  ORDER BY salary DESC) \n        LOOP\n            IF l_result.COUNT < p_limit THEN\n                l_result.EXTEND;\n                l_result(l_result.COUNT) := employee_record(r.emp_id, r.emp_name, r.salary);\n            ELSE\n                EXIT;\n            END IF;\n\n                l_result.EXTEND;\n                l_result(l_result.COUNT) := employee_record(r.emp_id, r.emp_name, r.salary);\n            ELSE\n                EXIT;\n            END IF;\n        END LOOP;\n        \n        RETURN l_result;\n    END get_top_performers;\nEND hr_management_pkg;\n/",
+    "is_resolved": true,
+    "description": "[Description generation failed: Error calling model 'gemini-2.5-flash-lite' (RESOURCE_EXHAUSTED): 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite\\nPlease retry in 16.363408832s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-flash-lite'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '16s'}]}}]",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_0006",
+    "entity_name": "phone_number_t",
+    "entity_type": "TABLE_OP",
+    "operation_type": "CREATE",
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      1
+    ],
+    "resolved_code": "CREATE TYPE phone_number_t AS TABLE OF VARCHAR2(20);\n/",
+    "is_resolved": true,
+    "description": "[Description generation failed: Error calling model 'gemini-2.5-flash-lite' (RESOURCE_EXHAUSTED): 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite\\nPlease retry in 42.678611973s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-flash-lite'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '42s'}]}}]",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_0007",
+    "entity_name": "contact_info",
+    "entity_type": "TABLE_OP",
+    "operation_type": "CREATE",
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      1
+    ],
+    "resolved_code": "CREATE TABLE contact_info (\n    contact_id NUMBER,\n    contact_name VARCHAR2(100),\n    phones phone_number_t\n) NESTED TABLE phones STORE AS phones_tab;\n/",
+    "is_resolved": true,
+    "description": "[Description generation failed: Error calling model 'gemini-2.5-flash-lite' (RESOURCE_EXHAUSTED): 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite\\nPlease retry in 7.781707379s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-flash-lite'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '7s'}]}}]",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_0008",
+    "entity_name": "contact_info",
+    "entity_type": "TABLE_OP",
+    "operation_type": "INSERT",
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      1
+    ],
+    "resolved_code": "INSERT INTO contact_info VALUES (1, 'John Doe', phone_number_t('123-456', '789-012'));\n/",
+    "is_resolved": true,
+    "description": "[Description generation failed: Error calling model 'gemini-2.5-flash-lite' (RESOURCE_EXHAUSTED): 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite\\nPlease retry in 34.108696209s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-2.5-flash-lite', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '34s'}]}}]",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_0009",
+    "entity_name": "contact_info",
+    "entity_type": "TABLE_OP",
+    "operation_type": "UPDATE",
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      1
+    ],
+    "resolved_code": "UPDATE TABLE(SELECT phones FROM contact_info WHERE contact_id = 1) p\nSET COLUMN_VALUE = '555-555'\nWHERE COLUMN_VALUE = '123-456';\n/",
+    "is_resolved": true,
+    "description": "[Description generation failed: Error calling model 'gemini-2.5-flash-lite' (RESOURCE_EXHAUSTED): 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite\\nPlease retry in 227.166106ms.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-flash-lite'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '0s'}]}}]",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_0010",
+    "entity_name": "contact_info",
+    "entity_type": "TABLE_OP",
+    "operation_type": "SELECT",
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      1
+    ],
+    "resolved_code": "SELECT contact_name, p.COLUMN_VALUE \nFROM contact_info c, TABLE(c.phones) p;\n/",
+    "is_resolved": true,
+    "description": "[Description generation failed: Error calling model 'gemini-2.5-flash-lite' (RESOURCE_EXHAUSTED): 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite\\nPlease retry in 26.756176439s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-flash-lite'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '26s'}]}}]",
+    "trigger_target": null
+  }
+]

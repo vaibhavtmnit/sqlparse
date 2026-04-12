@@ -13,7 +13,7 @@ class SQLChunker:
     It acts as an iterable, yielding Chunk objects.
     """
     
-    def __init__(self, sql_code: str, window_size: int, overlap: int):
+    def __init__(self, sql_code: str, window_size: int, overlap: int, chunking_mode: str = 'lines'):
         """
         Initialize the SQLChunker.
         
@@ -21,6 +21,8 @@ class SQLChunker:
             sql_code: The raw SQL script code to be chunked.
             window_size: The number of lines each chunk should contain.
             overlap: The number of overlapping lines between consecutive chunks.
+            chunking_mode: 'lines' or 'tokens' (currently only 'lines' is natively implemented here, 
+                          but needed for API consistency).
         """
         if window_size <= 0:
             raise ValueError("window_size must be strictly greater than 0.")
@@ -30,6 +32,7 @@ class SQLChunker:
         self.sql_code = sql_code
         self.window_size = window_size
         self.overlap = overlap
+        self.chunking_mode = chunking_mode
         self.lines = self.sql_code.splitlines()
 
     def __iter__(self) -> Iterator[Chunk]:

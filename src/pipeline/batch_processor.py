@@ -43,7 +43,8 @@ class DirectoryBatchProcessor:
             from src.miner_advanced.orchestrator import MinerAdvancedOrchestrator
             
             # Step 1: Chunker & Separator
-            chunker = SQLChunker(code, window_size=120, overlap=15, chunking_mode='tokens')
+            # User requested line-based chunking
+            chunker = SQLChunker(code, window_size=50, overlap=5, chunking_mode='lines')
             separator = CodeSeparator(self.llm, skip_descriptions=False)
             registry = separator.process(chunker)
             
@@ -51,11 +52,12 @@ class DirectoryBatchProcessor:
             registry.save_to_file(str(script_out_dir / "entity_registry.json"))
             
             # Step 2: Extract Node Relationships out of the AST
-            miner = MinerAdvancedOrchestrator(self.llm)
-            miner.mine_registry(registry)
-            
-            # Save specific JSON Extractions
-            miner.dump_results(str(script_out_dir))
+            miner = MinerAdvancedOrchestrator(
+                registry=registry, 
+                llm=self.llm, 
+                workspace_dir=str(script_out_dir)
+            )
+            miner.run()
             
             logger.info(f"BATCH_PROCESSOR: Execution finalized. Assets built natively in {script_out_dir}")
         except Exception as e:
