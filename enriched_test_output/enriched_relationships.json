@@ -1,0 +1,31 @@
+[
+  {
+    "source":"EMPLOYEES",
+    "target":"SALARY_HISTORY",
+    "relationship_type":[
+      "READ_INSERT"
+    ],
+    "source_mapping_id":[
+      "ent_005"
+    ],
+    "field_mappings":[
+      {
+        "source_fields":[
+          "SALARY"
+        ],
+        "target_field":"OLD_SALARY",
+        "transformation_logic":"Direct copy before update."
+      },
+      {
+        "source_fields":[
+          "SALARY"
+        ],
+        "target_field":"NEW_SALARY",
+        "transformation_logic":"Calculated increment: SALARY * (1 + P_PERCENT\/100)"
+      }
+    ],
+    "confidence_score":[
+      1.0
+    ]
+  }
+]

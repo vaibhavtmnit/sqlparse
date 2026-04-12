@@ -1,0 +1,17 @@
+[
+  {
+    "flow_id":"flow_001",
+    "step_number":[
+      1
+    ],
+    "source_mapping_id":[
+      "ent_005"
+    ],
+    "description":[
+      "Inserting into SALARY_HISTORY from EMPLOYEES."
+    ],
+    "logic_summary":[
+      "INSERT SELECT with salary calculation."
+    ]
+  }
+]

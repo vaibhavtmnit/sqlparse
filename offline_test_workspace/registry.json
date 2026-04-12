@@ -1,0 +1,17 @@
+[
+  {
+    "entity_id": "ent_001",
+    "entity_name": "EMPLOYEES",
+    "entity_type": "TABLE",
+    "operation_type": null,
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      0
+    ],
+    "resolved_code": "X",
+    "is_resolved": false,
+    "description": "",
+    "trigger_target": null
+  }
+]
