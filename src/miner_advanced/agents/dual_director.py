@@ -10,6 +10,7 @@ import re
 import time
 from pathlib import Path
 from typing import Any
+from loguru import logger
 
 from src.miner_advanced.models import AdvancedMiningResult
 from src.miner_advanced.agents.director import MiningDirector # The classic LCEL fallback

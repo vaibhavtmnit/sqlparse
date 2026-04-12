@@ -46,14 +46,6 @@ class MinerAdvancedOrchestrator:
         
         self.state = MinerStateContext(registry)
         
-        # Inject Multi-Agent Pipeline
-        self.director = DualModeMiningDirector(
-            llm=llm, 
-            execution_mode=execution_mode, 
-            registry=registry,
-            workspace_dir=str(self.workspace_dir)
-        )
-        
         # Create output workspace
         if workspace_dir:
             self.workspace_dir = Path(workspace_dir)
@@ -62,6 +54,14 @@ class MinerAdvancedOrchestrator:
             self.workspace_dir = Path(f"miner_advanced_workspace_{timestamp}")
         
         self.workspace_dir.mkdir(parents=True, exist_ok=True)
+
+        # Inject Multi-Agent Pipeline
+        self.director = DualModeMiningDirector(
+            llm=llm, 
+            execution_mode=execution_mode, 
+            registry=registry,
+            workspace_dir=str(self.workspace_dir)
+        )
         
         # Add a specific log file for this run
         log_file = self.workspace_dir / "miner_run.log"

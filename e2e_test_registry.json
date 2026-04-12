@@ -1,0 +1,77 @@
+[
+  {
+    "entity_id": "ent_001",
+    "entity_name": "EMPLOYEES",
+    "entity_type": "TABLE",
+    "operation_type": null,
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      0
+    ],
+    "resolved_code": "CREATE TABLE EMPLOYEES (EMP_ID NUMBER, EMP_NAME VARCHAR2(100), SALARY NUMBER, DEPARTMENT_ID NUMBER);",
+    "is_resolved": false,
+    "description": "",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_002",
+    "entity_name": "DEPARTMENTS",
+    "entity_type": "TABLE",
+    "operation_type": null,
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      0
+    ],
+    "resolved_code": "CREATE TABLE DEPARTMENTS (DEPT_ID NUMBER, DEPT_NAME VARCHAR2(100));",
+    "is_resolved": false,
+    "description": "",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_003",
+    "entity_name": "SALARY_HISTORY",
+    "entity_type": "TABLE",
+    "operation_type": null,
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      0
+    ],
+    "resolved_code": "CREATE TABLE SALARY_HISTORY (EMP_ID NUMBER, OLD_SALARY NUMBER, NEW_SALARY NUMBER, CHANGE_DATE DATE);",
+    "is_resolved": false,
+    "description": "",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_004",
+    "entity_name": "HR_UTILS",
+    "entity_type": "PACKAGE",
+    "operation_type": null,
+    "parent_id": null,
+    "nesting_level": 0,
+    "chunk_ids": [
+      0
+    ],
+    "resolved_code": "CREATE OR REPLACE PACKAGE HR_UTILS AS\n    PROCEDURE PROCESS_ANNUAL_INCREMENT(p_dept_id NUMBER, p_percent NUMBER);\nEND HR_UTILS;",
+    "is_resolved": false,
+    "description": "",
+    "trigger_target": null
+  },
+  {
+    "entity_id": "ent_005",
+    "entity_name": "HR_UTILS",
+    "entity_type": "PACKAGE_BODY",
+    "operation_type": null,
+    "parent_id": "ent_004",
+    "nesting_level": 0,
+    "chunk_ids": [
+      0
+    ],
+    "resolved_code": "CREATE OR REPLACE PACKAGE BODY HR_UTILS AS\n    PROCEDURE PROCESS_ANNUAL_INCREMENT(p_dept_id NUMBER, p_percent NUMBER) IS\n    BEGIN\n        INSERT INTO SALARY_HISTORY (EMP_ID, OLD_SALARY, NEW_SALARY, CHANGE_DATE)\n        SELECT e.EMP_ID, e.SALARY, e.SALARY * (1 + p_percent/100), SYSDATE\n        FROM EMPLOYEES e\n        WHERE e.DEPARTMENT_ID = p_dept_id;\n\n        UPDATE EMPLOYEES\n        SET SALARY = SALARY * (1 + p_percent/100)\n        WHERE DEPARTMENT_ID = p_dept_id;\n    END PROCESS_ANNUAL_INCREMENT;\nEND HR_UTILS;",
+    "is_resolved": false,
+    "description": "",
+    "trigger_target": null
+  }
+]

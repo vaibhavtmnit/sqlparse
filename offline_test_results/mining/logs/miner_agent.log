@@ -1,0 +1,12 @@
+2026-04-12 17:17:39 | INFO     | [MinerAgent] Logger initialized. Log file: offline_test_results\mining\logs\miner_agent.log
+2026-04-12 17:17:39 | INFO     | [MinerAgent] Loaded system prompt from C:\Users\vaibh\sqlparse\src\prompts\miner_prompt.md
+2026-04-12 17:17:39 | INFO     | [MinerAgent] Creating MinerDeepAgent | model=<__main__.test_mocked_orchestration.<locals>.MockLLM object at 0x0000028F7194FFB0> | tools=8 | subagents=5 | output_mode=pydantic
+2026-04-12 17:17:39 | CRITICAL | [MinerAgent] FATAL INTEGRITY FAILURE: 'MockLLM' object has no attribute 'startswith'
+2026-04-12 17:17:58 | INFO     | [MinerAgent] Logger initialized. Log file: offline_test_results\mining\logs\miner_agent.log
+2026-04-12 17:17:58 | INFO     | [MinerAgent] Loaded system prompt from C:\Users\vaibh\sqlparse\src\prompts\miner_prompt.md
+2026-04-12 17:17:58 | INFO     | [MinerAgent] Creating MinerDeepAgent | model=<__main__.test_mocked_orchestration.<locals>.MockLLM object at 0x000001FB5A4BE3C0> | tools=8 | subagents=5 | output_mode=pydantic
+2026-04-12 17:17:58 | CRITICAL | [MinerAgent] FATAL INTEGRITY FAILURE: `model` must be a string (e.g., 'openai:gpt-4o'), got MockLLM. If you've already constructed a chat model object, use it directly instead of passing it to init_chat_model().
+2026-04-12 17:18:19 | INFO     | [MinerAgent] Logger initialized. Log file: offline_test_results\mining\logs\miner_agent.log
+2026-04-12 17:18:19 | INFO     | [MinerAgent] Loaded system prompt from C:\Users\vaibh\sqlparse\src\prompts\miner_prompt.md
+2026-04-12 17:18:19 | INFO     | [MinerAgent] Creating MinerDeepAgent | model=<MagicMock id='1935907142880'> | tools=8 | subagents=5 | output_mode=pydantic
+2026-04-12 17:18:19 | CRITICAL | [MinerAgent] FATAL INTEGRITY FAILURE: `model` must be a string (e.g., 'openai:gpt-4o'), got MagicMock. If you've already constructed a chat model object, use it directly instead of passing it to init_chat_model().

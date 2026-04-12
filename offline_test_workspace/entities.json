@@ -1,0 +1,16 @@
+[
+  {
+    "entity_name": "EMPLOYEES",
+    "entity_type": "TABLE",
+    "source_mapping_id": "ent_001",
+    "raw_chunk_ids": [0],
+    "description": "Base table for employee data."
+  },
+  {
+    "entity_name": "SALARY_HISTORY",
+    "entity_type": "TABLE",
+    "source_mapping_id": "ent_003",
+    "raw_chunk_ids": [0],
+    "description": "Logs salary changes."
+  }
+]
