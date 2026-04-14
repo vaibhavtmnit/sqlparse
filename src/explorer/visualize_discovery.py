@@ -33,16 +33,18 @@ def visualize_discovery(json_path: str = "discovery_results.json"):
 
     # Build edges from source fields to target fields
     for target_node, metadata in tree.items():
-        # target_node is usually 'TABLE_NAME.FIELD_NAME'
         sources = metadata.get("sources", [])
         for src in sources:
             src_tbl = src.get("source_table", "UNKNOWN")
             src_fld = src.get("source_field", "UNKNOWN")
             src_node = f"{src_tbl}.{src_fld}".upper()
             
+            # Extract relationship logic
+            relationship_logic = src.get("logic", "Direct Map")
+            
             # Lineage flows from Source -> Target
             G.add_edge(src_node, target_node.upper(), 
-                       logic=src.get("logic", "N/A"),
+                       relationship=relationship_logic,
                        confidence=src.get("confidence", 1.0))
 
     if G.number_of_nodes() == 0:
@@ -52,34 +54,50 @@ def visualize_discovery(json_path: str = "discovery_results.json"):
     print(f"Generated network object with {G.number_of_nodes()} nodes and {G.number_of_edges()} edges.")
 
     # --- PLOTTING ---
-    plt.figure(figsize=(14, 10))
+    plt.figure(figsize=(16, 12))
     
-    # Use spring layout for a balanced look
-    pos = nx.spring_layout(G, k=0.6, iterations=50)
+    # Use a more spread-out layout to accommodate edge labels
+    pos = nx.spring_layout(G, k=0.8, iterations=100, seed=42)
     
     # Draw Nodes
     nx.draw_networkx_nodes(G, pos, 
-                           node_size=2500, 
+                           node_size=3000, 
                            node_color="#4361ee", 
-                           alpha=0.8)
+                           alpha=0.9,
+                           edgecolors="white",
+                           linewidths=1)
     
     # Draw Edges
     nx.draw_networkx_edges(G, pos, 
                            width=2, 
                            edge_color="#3f37c9", 
-                           alpha=0.5, 
+                           alpha=0.4, 
                            arrows=True, 
-                           arrowsize=25, 
+                           arrowsize=30, 
                            connectionstyle="arc3,rad=0.1")
     
-    # Draw Labels
+    # Draw Node Labels
     nx.draw_networkx_labels(G, pos, 
                             font_size=9, 
                             font_family="sans-serif", 
                             font_weight="bold", 
                             font_color="white")
 
-    plt.title("SQL Lineage Discovery - Field Level Map", fontsize=16, fontweight="bold", pad=20)
+    # Draw Edge Labels (Relationships)
+    edge_labels = nx.get_edge_attributes(G, 'relationship')
+    # Filter out long strings to keep plot clean
+    formatted_labels = {k: (v[:30] + '...') if len(str(v)) > 30 else v for k, v in edge_labels.items()}
+    
+    nx.draw_networkx_edge_labels(G, pos, 
+                                 edge_labels=formatted_labels,
+                                 font_size=7,
+                                 font_color="#333333",
+                                 label_pos=0.5,
+                                 alpha=0.9,
+                                 rotate=True,
+                                 bbox=dict(facecolor='white', edgecolor='none', alpha=0.7, boxstyle='round,pad=0.2'))
+
+    plt.title("SQL Lineage Map with Data Relationships", fontsize=18, fontweight="bold", pad=30)
     plt.axis("off")
     
     output_img = "lineage_discovery_plot.png"
